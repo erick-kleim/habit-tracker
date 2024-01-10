@@ -21,22 +21,34 @@ public class DateHabitDone implements Serializable{
 	@Column(name = "ID_DATE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 	@ManyToOne
 	@JoinColumn(name="HABITS_ID")
 	private Habit habit;
-	private LocalDate data;
+	private LocalDate date;
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public DateHabitDone(Habit habit, LocalDate date) {
+		super();
+		this.habit = habit;
+		this.date = date;
+	}
 	public Habit getHabit() {
 		return habit;
 	}
 	public void setHabit(Habit habit) {
 		this.habit = habit;
 	}
-	public LocalDate getData() {
-		return data;
+	public LocalDate getDate() {
+		return date;
 	}
-	public void setData(LocalDate data) {
-		this.data = data;
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 }
