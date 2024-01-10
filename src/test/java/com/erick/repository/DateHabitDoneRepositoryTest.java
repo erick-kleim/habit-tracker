@@ -28,6 +28,7 @@ public class DateHabitDoneRepositoryTest {
 		Habit habit = new Habit();
 		habit.setName("Pay the bills");
 		habit.setPeriodicity(Periodicity.MONTHLY);
+		habit.setEnabled(true);
 		entityManager.persist(habit);
 		
 		LocalDate dec23 = LocalDate.of(2023, Month.DECEMBER, 15);

@@ -16,14 +16,17 @@ public class HabitRepositoryTest {
 
 	@Test
 	void findHabitById() {
-		Habit habitr = new Habit();
-		habitr.setName("Pay the bills");
-		habitr.setPeriodicity(Periodicity.MONTHLY);
+		Habit habit = new Habit();
+		habit.setName("Pay the bills");
+		habit.setPeriodicity(Periodicity.MONTHLY);
+		habit.setEnabled(true);
 		
-		habitRepository.save(habitr);
+		habitRepository.save(habit);
+		
 		Habit actual = habitRepository.findAll().get(0);
 		Assertions.assertEquals("Pay the bills", actual.getName());
 		Assertions.assertEquals(Periodicity.MONTHLY, actual.getPeriodicity());
+		Assertions.assertTrue(actual.isEnabled());
 		
 	}
 }
