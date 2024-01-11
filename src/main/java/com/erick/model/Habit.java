@@ -23,12 +23,12 @@ public class Habit implements Serializable{
 
 	@Column(nullable = false)
 	private String name;
-
-	@Column
-	private Periodicity periodicity;
 	
 	@Column
 	private boolean enabled;
+
+	@Column
+	private Periodicity periodicity;
 
 	public Long getId() {
 		return id;
@@ -46,14 +46,6 @@ public class Habit implements Serializable{
 		this.name = name;
 	}
 
-	public Periodicity getPeriodicity() {
-		return periodicity;
-	}
-
-	public void setPeriodicity(Periodicity periodicity) {
-		this.periodicity = periodicity;
-	}
-
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -62,4 +54,11 @@ public class Habit implements Serializable{
 		this.enabled = enabled;
 	}
 	
+	public Periodicity getPeriodicity() {
+		return periodicity;
+	}
+
+	public void setPeriodicity(Periodicity periodicity) {
+		this.periodicity = periodicity;
+	}
 }
