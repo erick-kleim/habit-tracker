@@ -13,8 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="DATES_HABITS")
-public class DateHabitDone implements Serializable{
+@Table(name="HABIT_DONE")
+public class HabitDone implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -24,8 +24,7 @@ public class DateHabitDone implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="HABITS_ID")
 	private Habit habit;
-	private LocalDate date;
-	
+	private LocalDate doneDate;
 	
 	public Long getId() {
 		return id;
@@ -33,22 +32,23 @@ public class DateHabitDone implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public DateHabitDone(Habit habit, LocalDate date) {
+	public HabitDone(Habit habit, LocalDate doneDate) {
 		super();
 		this.habit = habit;
-		this.date = date;
+		this.doneDate = doneDate;
 	}
+	
 	public Habit getHabit() {
 		return habit;
 	}
 	public void setHabit(Habit habit) {
 		this.habit = habit;
 	}
-	public LocalDate getDate() {
-		return date;
+	public LocalDate getDoneDate() {
+		return doneDate;
 	}
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setDoneDate(LocalDate doneDate) {
+		this.doneDate = doneDate;
 	}
 
 }

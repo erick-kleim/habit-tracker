@@ -10,18 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.erick.model.DateHabitDone;
+import com.erick.model.HabitDone;
 import com.erick.model.Habit;
 import com.erick.model.enums.Periodicity;
 
 @DataJpaTest
-public class DateHabitDoneRepositoryTest {
+public class HabitDoneRepositoryTest {
 
 	@Autowired
 	TestEntityManager entityManager;
 	
 	@Autowired
-	DateHabitDoneRepository dateHabitDoneRepository;
+	HabitDoneRepository habitDoneRepository;
 	
 	@Test
 	public void tsete() {
@@ -32,19 +32,19 @@ public class DateHabitDoneRepositoryTest {
 		entityManager.persist(habit);
 		
 		LocalDate dec23 = LocalDate.of(2023, Month.DECEMBER, 15);
-		dateHabitDoneRepository.save(new DateHabitDone(habit, dec23));
+		habitDoneRepository.save(new HabitDone(habit, dec23));
 		LocalDate jan24 = LocalDate.of(2024, Month.JANUARY, 15);
-		dateHabitDoneRepository.save(new DateHabitDone(habit, jan24));
+		habitDoneRepository.save(new HabitDone(habit, jan24));
 		
-		List<DateHabitDone> actual = dateHabitDoneRepository.findAll();
+		List<HabitDone> actual = habitDoneRepository.findAll();
 		Assertions.assertEquals(2, actual.size());
 		
 		actual.stream().forEach(h->{
 			Assertions.assertEquals(h.getHabit(), habit);
 			if(h.getId()==1) 
-				Assertions.assertEquals(h.getDate(), dec23);
+				Assertions.assertEquals(h.getDoneDate(), dec23);
 			else 
-				Assertions.assertEquals(h.getDate(), jan24);
+				Assertions.assertEquals(h.getDoneDate(), jan24);
 		});
 	}
 }
