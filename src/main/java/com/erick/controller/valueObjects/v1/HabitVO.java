@@ -7,24 +7,24 @@ import java.util.List;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.erick.model.enums.Periodicity;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class HabitVO extends RepresentationModel<HabitVO> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	private Long idHabit;
+	private Long id;
 	private String name;
-	@JsonProperty("isEnabled")
 	private boolean enabled;
 	private Periodicity periodicity;
 	private List<LocalDate> doneDates;
 	
-	public Long getIdHabit() {
-		return idHabit;
+	public Long getId() {
+		return id;
 	}
-	public void setIdHabit(Long idHabit) {
-		this.idHabit = idHabit;
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public String getName() {
 		return name;
