@@ -3,6 +3,7 @@ package com.erick.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.erick.controller.valueObjects.v1.HabitVO;
 import com.erick.controller.valueObjects.v1.ResponseListVO;
 import com.erick.controller.valueObjects.v1.ResponseVO;
+import com.erick.exceptions.ResourceNotFoundException;
 import com.erick.mock.MockHabit;
 import com.erick.model.Habit;
 import com.erick.repository.HabitRepository;
@@ -75,7 +77,19 @@ class HabitServiceTest {
 		when(repository.findById(1L)).thenReturn(Optional.of(persisted));
 
 		ResponseVO habitFound = service.findById(1L);
-		Assertions.assertNotNull(habitFound);
+		assertNotNull(habitFound);
+	}
+	
+	@Test
+	void errorWhenNotFoundById() {
+		when(repository.findById(4L)).thenReturn(Optional.empty());
+
+		Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+			service.findById(4L);
+		});
+		
+		assertNotNull(exception);
+		assertEquals(exception.getMessage(), "Habit not found matching id: '4'.");
 	}
 
 	@Test
@@ -137,14 +151,14 @@ class HabitServiceTest {
 		Assertions.assertEquals(2, valueObjects.size());
 		valueObjects.stream().forEach(habitVO->{
 			if(habitVO.getId()==1) {
-				Assertions.assertEquals(habitVO.getName(), persisted.getName());
-				Assertions.assertEquals(habitVO.isEnabled(), persisted.isEnabled());
-				Assertions.assertEquals(habitVO.getPeriodicity(), persisted.getPeriodicity());
+				assertEquals(habitVO.getName(), persisted.getName());
+				assertEquals(habitVO.isEnabled(), persisted.isEnabled());
+				assertEquals(habitVO.getPeriodicity(), persisted.getPeriodicity());
 			}
 			else {
-				Assertions.assertEquals(habitVO.getName(), updated.getName());
-				Assertions.assertEquals(habitVO.isEnabled(), updated.isEnabled());
-				Assertions.assertEquals(habitVO.getPeriodicity(), updated.getPeriodicity());
+				assertEquals(habitVO.getName(), updated.getName());
+				assertEquals(habitVO.isEnabled(), updated.isEnabled());
+				assertEquals(habitVO.getPeriodicity(), updated.getPeriodicity());
 			}
 		});
 	}

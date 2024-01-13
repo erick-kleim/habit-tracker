@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.erick.controller.valueObjects.v1.HabitVO;
 import com.erick.controller.valueObjects.v1.ResponseListVO;
 import com.erick.controller.valueObjects.v1.ResponseVO;
+import com.erick.exceptions.ResourceNotFoundException;
 import com.erick.model.Habit;
 import com.erick.repository.HabitRepository;
 
@@ -50,7 +51,16 @@ public class HabitService{
 	public ResponseVO findById(Long id) {
 		logger.info("Finding habit by id: " + id + ".");
 		ResponseVO responseVO = new ResponseVO();
-		responseVO.setValueObject(habitRepository.findById(id));
+		Optional<Habit> habit = habitRepository.findById(id);
+		HabitVO habitVO = new HabitVO();
+		habit.ifPresent(h->{
+			habitVO.setId(h.getId());
+			habitVO.setName(h.getName());
+			habitVO.setEnabled(h.isEnabled());
+			habitVO.setPeriodicity(h.getPeriodicity());
+		});
+		habit.orElseThrow(() -> habitNotFound(id));
+		responseVO.setValueObject(habitVO);
 		return responseVO;
 	}	
 	
@@ -74,6 +84,7 @@ public class HabitService{
 			
 			logger.info("Update was a success.");
 		});
+		habit.orElseThrow(() -> habitNotFound(habitVO.getId()));
 		return responseVO;
 	}
 	
@@ -89,8 +100,9 @@ public class HabitService{
 			responseVO.setMessage(
 					MessageFormat.format("Habit: {0}(id {1}) was successfully disabled.", h.getName(), h.getId())
 					);
-			logger.info("Delete was a success.");
+			logger.info("Disasble was a success.");
 		});
+		habit.orElseThrow(() -> habitNotFound(id));
 		return responseVO;
 	}
 	
@@ -106,6 +118,7 @@ public class HabitService{
 					);
 			logger.info("Delete was a success.");
 		});
+		habit.orElseThrow(() -> habitNotFound(id));
 		return responseVO;
 	}
 	
@@ -126,4 +139,10 @@ public class HabitService{
 		logger.info("Search completed.");
 		return responseListVO;
 	}
+	
+	private ResourceNotFoundException habitNotFound(long id) {
+		String message = String.format("Habit not found matching id: '%d'.", id);
+		return new ResourceNotFoundException(message);
+	}
+
 }
