@@ -25,32 +25,24 @@ public class HabitService{
 	
 	private Logger logger = Logger.getLogger(HabitService.class.getName());
 
-	public ResponseVO createHabit(HabitVO habitVO) {
-		logger.info("Start to create 'habit'.");
+	public Long createHabit(HabitVO habitVO) {
+		String name = habitVO.getName();
+		logger.info(MessageFormat.format("Initiating the creation of a new habit: '{0}'.", name));
 		
 		Habit habit = new Habit();
-		habit.setName(habitVO.getName());
+		habit.setName(name);
 		habit.setEnabled(habitVO.isEnabled());
 		habit.setPeriodicity(habitVO.getPeriodicity());
-		
 		habit = habitRepository.save(habit);
 		
-		habitVO.setId(habit.getId());
-		habitVO.setName(habit.getName());
-		habitVO.setEnabled(habit.isEnabled());
-		habitVO.setPeriodicity(habit.getPeriodicity());
-		
-		ResponseVO responseVO = new ResponseVO();
-		responseVO.setValueObject(habitVO);
-		responseVO.setMessage("Success.");
-
-		logger.info("Finish to create 'habit'.");
-		return responseVO;
+		Long id = habit.getId();
+		logger.info(MessageFormat.format("A new habit ({0} ID:{1}) has been created successfully.",name, id));
+		return id;
 	}
 	
 	public ResponseVO findById(Long id) {
-		logger.info("Finding habit by id: " + id + ".");
-		ResponseVO responseVO = new ResponseVO();
+		logger.info(MessageFormat.format("Searching for the habit with ID: {0}.",id));
+		
 		Optional<Habit> habit = habitRepository.findById(id);
 		HabitVO habitVO = new HabitVO();
 		habit.ifPresent(h->{
@@ -60,71 +52,59 @@ public class HabitService{
 			habitVO.setPeriodicity(h.getPeriodicity());
 		});
 		habit.orElseThrow(() -> habitNotFound(id));
+		
+		ResponseVO responseVO = new ResponseVO();
 		responseVO.setValueObject(habitVO);
+
+		logger.info(MessageFormat.format("Found the habit with ID: {0} successfully.",id));
 		return responseVO;
 	}	
 	
-	public ResponseVO updateById(HabitVO habitVO) {
-		ResponseVO responseVO = new ResponseVO();
-
-		logger.info("Update by id: " + habitVO.getId() + ".");
-		Optional<Habit> habit = habitRepository.findById(habitVO.getId());
+	public void updateById(HabitVO habitVO) {
+		String name = habitVO.getName();
+		Long id = habitVO.getId();
+		logger.info(MessageFormat.format("Starting the update of the habit {0} ID:{0}.", name, id));
+		
+		Optional<Habit> habit = habitRepository.findById(id);
 		habit.ifPresent(h->{
-			h.setName(habitVO.getName());
+			h.setName(name);
 			h.setEnabled(habitVO.isEnabled());
 			h.setPeriodicity(habitVO.getPeriodicity());
-			
 			h = habitRepository.save(h);
-			
-			habitVO.setId(h.getId());
-			habitVO.setName(h.getName());
-			habitVO.setEnabled(h.isEnabled());
-			habitVO.setPeriodicity(h.getPeriodicity());
-			responseVO.setValueObject(habitVO);
-			
-			logger.info("Update was a success.");
+			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully updated.", name, id));
 		});
-		habit.orElseThrow(() -> habitNotFound(habitVO.getId()));
-		return responseVO;
+		habit.orElseThrow(() -> habitNotFound(id));
 	}
 	
-	public ResponseVO disableById(long id) {
-	
-		ResponseVO responseVO = new ResponseVO();
-
-		logger.info("Disasble by id: " + id + ".");
+	public void disableById(long id) {
+		logger.info(MessageFormat.format("Starting the disable of the habit ID:{0}.", id));
+		
+		logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully disabled.", id, id));
+		
 		Optional<Habit> habit = habitRepository.findById(id);
 		habit.ifPresent(h->{
 			h.setEnabled(false);
 			habitRepository.save(h);
-			responseVO.setMessage(
-					MessageFormat.format("Habit: {0}(id {1}) was successfully disabled.", h.getName(), h.getId())
-					);
-			logger.info("Disasble was a success.");
-		});
+			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully disabled.", h.getName(), id));
+			});
 		habit.orElseThrow(() -> habitNotFound(id));
-		return responseVO;
 	}
 	
-	public ResponseVO deleteById(long id) {
-		ResponseVO responseVO = new ResponseVO();
-
-		logger.info("Delete by id: " + id + ".");
+	public void deleteById(long id) {
+		logger.info(MessageFormat.format("Starting the deletion of the habit ID:{0}.", id));
+		
 		Optional<Habit> habit = habitRepository.findById(id);
 		habit.ifPresent(h->{
 			habitRepository.delete(h);
-			responseVO.setMessage(
-					MessageFormat.format("Habit: {0}(id {1}) was successfully deleted.", h.getName(), h.getId())
-					);
-			logger.info("Delete was a success.");
+			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully deleted.",h.getName(), id));
 		});
+		
 		habit.orElseThrow(() -> habitNotFound(id));
-		return responseVO;
 	}
 	
 	public ResponseListVO<HabitVO> findAll() {
-		logger.info("Finding all habits.");
-		ResponseListVO<HabitVO> responseListVO = new ResponseListVO<HabitVO>();
+		logger.info("Initiating the retrieval of all habits.");
+		
 		List<Habit> habits = habitRepository.findAll();
 		List<HabitVO> listVO = habits.stream().map((h) ->{
 			HabitVO hvo = new HabitVO();
@@ -134,14 +114,17 @@ public class HabitService{
 			hvo.setPeriodicity(h.getPeriodicity());
 			return hvo;
 		}).collect(Collectors.toList());		
+
+		ResponseListVO<HabitVO> responseListVO = new ResponseListVO<HabitVO>();
 		responseListVO.setValueObject(listVO);
-		responseListVO.setMessage("Success.");
-		logger.info("Search completed.");
+		
+		logger.info("Successfully retrieved all habits.");
 		return responseListVO;
 	}
 	
 	private ResourceNotFoundException habitNotFound(long id) {
-		String message = String.format("Habit not found matching id: '%d'.", id);
+		String message = MessageFormat.format("No habit found with ID: {0}.",id);
+		logger.info(message);
 		return new ResourceNotFoundException(message);
 	}
 

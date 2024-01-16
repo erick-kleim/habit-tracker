@@ -62,14 +62,10 @@ class HabitServiceTest {
 		habitVOSent.setName(habit.getName());
 		habitVOSent.setEnabled(habit.isEnabled());
 		habitVOSent.setPeriodicity(habit.getPeriodicity());		
-		ResponseVO response = service.createHabit(habitVOSent);
 		
-		assertNotNull(response);
-		HabitVO habitVOReceived = (HabitVO)response.getValueObject();
-		assertEquals(persisted.getId(), habitVOReceived.getId());
-		assertEquals(persisted.getName(), habitVOReceived.getName());
-		assertEquals(persisted.isEnabled(), habitVOReceived.isEnabled());
-		assertEquals(persisted.getPeriodicity(), habitVOReceived.getPeriodicity());
+		Long habitId = service.createHabit(habitVOSent);
+
+		assertEquals(persisted.getId(), habitId);
 	}
 
 	@Test
@@ -79,7 +75,7 @@ class HabitServiceTest {
 		ResponseVO habitFound = service.findById(1L);
 		assertNotNull(habitFound);
 	}
-	
+
 	@Test
 	void errorWhenNotFoundById() {
 		when(repository.findById(4L)).thenReturn(Optional.empty());
@@ -89,7 +85,7 @@ class HabitServiceTest {
 		});
 		
 		assertNotNull(exception);
-		assertEquals(exception.getMessage(), "Habit not found matching id: '4'.");
+		assertEquals("No habit found with ID: 4.", exception.getMessage());
 	}
 
 	@Test
@@ -103,38 +99,20 @@ class HabitServiceTest {
 		habitVOSent.setEnabled(updated.isEnabled());
 		habitVOSent.setPeriodicity(updated.getPeriodicity());
 
-		ResponseVO response = service.updateById(habitVOSent);
-
-		assertNotNull(response);
-		HabitVO habitVOReceived = (HabitVO) response.getValueObject();
-		assertNotNull(habitVOReceived);
-		assertEquals(updated.getId(), habitVOReceived.getId());
-		assertEquals(updated.getName(), habitVOReceived.getName());
-		assertEquals(updated.isEnabled(), habitVOReceived.isEnabled());
-		assertEquals(updated.getPeriodicity(), habitVOReceived.getPeriodicity());
+		service.updateById(habitVOSent);
 	}
 
 	@Test
 	void testDeleteById() {
 		when(repository.findById(1L)).thenReturn(Optional.of(persisted));
-		
-		ResponseVO response = service.deleteById(1L);
-		assertNotNull(response);
-		assertNotNull(response.getMessage());
-		assertEquals("Habit: wash the dishes(id 1) was successfully deleted.",response.getMessage());
-		assertNull(response.getValueObject());
+		service.deleteById(1L);
 	}
 
 	@Test
-	void testDisableById() {		
+	void testDisableById() {	
 		when(repository.findById(1L)).thenReturn(Optional.of(persisted));
 		when(repository.save(persisted)).thenReturn(mockHabit.disabled());
-		
-		ResponseVO response = service.disableById(1L);
-		assertNotNull(response);
-		assertNotNull(response.getMessage());
-		assertEquals("Habit: wash the dishes(id 1) was successfully disabled.",response.getMessage());
-		assertNull(response.getValueObject());
+		service.disableById(1L);
 	}
 
 	@Test
@@ -143,8 +121,7 @@ class HabitServiceTest {
 		
 		ResponseListVO<HabitVO> responseListVO = service.findAll();
 		assertNotNull(responseListVO);
-		assertNotNull(responseListVO.getMessage());
-		assertEquals("Success.",responseListVO.getMessage());
+		assertNull(responseListVO.getMessage());
 		assertNotNull(responseListVO.getValueObject());
 		
 		List<HabitVO> valueObjects = responseListVO.getValueObject();
