@@ -7,16 +7,14 @@ import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"result", "message", "_links"})
+@JsonPropertyOrder({"valueObject", "message", "_links"})
 public class ResponseListVO<T> extends RepresentationModel<ResponseListVO<T>> implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private String message;
-		@JsonProperty("result")
-		private List<T> valueObject;
+		private List<HabitVO> valueObject;
 		
 		public String getMessage() {
 			return message;
@@ -24,10 +22,10 @@ public class ResponseListVO<T> extends RepresentationModel<ResponseListVO<T>> im
 		public void setMessage(String message) {
 			this.message = message;
 		}
-		public List<T> getValueObject() {
+		public List<HabitVO> getValueObject() {
 			return valueObject;
 		}
-		public void setValueObject(List<T> valueObject) {
+		public void setValueObject(List<HabitVO> valueObject) {
 			this.valueObject = valueObject;
 		}
 }

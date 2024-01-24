@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name="HABITS_DONE")
@@ -24,6 +26,7 @@ public class HabitDone implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="HABITS_ID")
 	private Habit habit;
+	@Temporal(TemporalType.DATE)
 	private LocalDate doneDate;
 	
 	public Long getId() {
