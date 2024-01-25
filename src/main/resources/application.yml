@@ -9,3 +9,5 @@ spring:
       ddl-auto: update
     open-in-view: false
     show-sql: false
+springdoc:
+  paths-to-match: /habit/v1/**
