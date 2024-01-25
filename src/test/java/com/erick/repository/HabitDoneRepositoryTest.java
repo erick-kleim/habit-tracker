@@ -7,15 +7,19 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.erick.model.HabitDone;
+import com.erick.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.erick.model.Habit;
+import com.erick.model.HabitDone;
 import com.erick.model.enums.Periodicity;
 
 @DataJpaTest
-public class HabitDoneRepositoryTest {
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+public class HabitDoneRepositoryTest extends AbstractIntegrationTest{
 
 	@Autowired
 	TestEntityManager entityManager;
@@ -24,7 +28,7 @@ public class HabitDoneRepositoryTest {
 	HabitDoneRepository habitDoneRepository;
 	
 	@Test
-	public void tsete() {
+	public void saveTwoHabitsDoneAndFindAll() {
 		Habit habit = new Habit();
 		habit.setName("Pay the bills");
 		habit.setPeriodicity(Periodicity.MONTHLY);
