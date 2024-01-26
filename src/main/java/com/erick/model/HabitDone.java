@@ -35,6 +35,13 @@ public class HabitDone implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public HabitDone(Habit habit) {
+		super();
+		this.habit = habit;
+		this.doneDate = LocalDate.now();
+	}
+	
 	public HabitDone(Habit habit, LocalDate doneDate) {
 		super();
 		this.habit = habit;
