@@ -9,6 +9,6 @@ spring:
     open-in-view: false
     show-sql: false
 springdoc:
-  paths-to-match: /habit/v1/**
+  paths-to-match: /habit/v1/**, /habit-done/v1/**
   swagger-ui:
     use-root-path: true
