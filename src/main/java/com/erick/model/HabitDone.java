@@ -2,8 +2,8 @@ package com.erick.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +20,6 @@ public class HabitDone implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	@Id
-	@Column(name = "ID_DATE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne
@@ -29,13 +28,10 @@ public class HabitDone implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private LocalDate doneDate;
 	
-	public Long getId() {
-		return id;
+	public HabitDone() {
+		super();
 	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
+
 	public HabitDone(Habit habit) {
 		super();
 		this.habit = habit;
@@ -46,6 +42,20 @@ public class HabitDone implements Serializable{
 		super();
 		this.habit = habit;
 		this.doneDate = doneDate;
+	}
+	
+	public HabitDone(Long id, Habit habit, LocalDate doneDate) {
+		super();
+		this.id = id;
+		this.habit = habit;
+		this.doneDate = doneDate;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	public Habit getHabit() {
@@ -59,6 +69,24 @@ public class HabitDone implements Serializable{
 	}
 	public void setDoneDate(LocalDate doneDate) {
 		this.doneDate = doneDate;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(doneDate, habit, id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HabitDone other = (HabitDone) obj;
+		return Objects.equals(doneDate, other.doneDate) && Objects.equals(habit, other.habit)
+				&& Objects.equals(id, other.id);
 	}
 
 }
