@@ -1,5 +1,7 @@
 package com.erick.service;
 
+import static com.erick.service.exceptions.ServicesExceptions.habitNotFound;
+
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.erick.controller.valueObjects.v1.HabitVO;
 import com.erick.controller.valueObjects.v1.ResponseListVO;
 import com.erick.controller.valueObjects.v1.ResponseVO;
-import com.erick.exceptions.ResourceNotFoundException;
 import com.erick.model.Habit;
 import com.erick.repository.HabitRepository;
 
@@ -51,7 +52,7 @@ public class HabitService{
 			habitVO.setEnabled(h.isEnabled());
 			habitVO.setPeriodicity(h.getPeriodicity());
 		});
-		habit.orElseThrow(() -> habitNotFound(id));
+		habit.orElseThrow(() -> habitNotFound(logger, id));
 		
 		ResponseVO responseVO = new ResponseVO();
 		responseVO.setValueObject(habitVO);
@@ -73,7 +74,7 @@ public class HabitService{
 			h = habitRepository.save(h);
 			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully updated.", name, id));
 		});
-		habit.orElseThrow(() -> habitNotFound(id));
+		habit.orElseThrow(() -> habitNotFound(logger, id));
 	}
 	
 	public void disableById(long id) {
@@ -87,7 +88,7 @@ public class HabitService{
 			habitRepository.save(h);
 			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully disabled.", h.getName(), id));
 			});
-		habit.orElseThrow(() -> habitNotFound(id));
+		habit.orElseThrow(() -> habitNotFound(logger, id));
 	}
 	
 	public void deleteById(long id) {
@@ -99,7 +100,7 @@ public class HabitService{
 			logger.info(MessageFormat.format("The habit ({0}, ID:{1}) has been successfully deleted.",h.getName(), id));
 		});
 		
-		habit.orElseThrow(() -> habitNotFound(id));
+		habit.orElseThrow(() -> habitNotFound(logger, id));
 	}
 	
 	public ResponseListVO<HabitVO> findAll() {
@@ -121,11 +122,4 @@ public class HabitService{
 		logger.info("Successfully retrieved all habits.");
 		return responseListVO;
 	}
-	
-	private ResourceNotFoundException habitNotFound(long id) {
-		String message = MessageFormat.format("No habit found with ID: {0}.",id);
-		logger.info(message);
-		return new ResourceNotFoundException(message);
-	}
-
 }

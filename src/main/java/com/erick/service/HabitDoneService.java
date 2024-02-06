@@ -1,5 +1,7 @@
 package com.erick.service;
 
+import static com.erick.service.exceptions.ServicesExceptions.*;
+
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -13,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.erick.controller.valueObjects.v1.HabitVO;
 import com.erick.controller.valueObjects.v1.ResponseVO;
-import com.erick.exceptions.DateParserException;
-import com.erick.exceptions.ResourceNotFoundException;
 import com.erick.model.Habit;
 import com.erick.model.HabitDone;
 import com.erick.repository.HabitDoneRepository;
@@ -37,7 +37,7 @@ public class HabitDoneService {
 		habit.ifPresent(h-> {
 			logger.info(MessageFormat.format("Marking the habit ({0}, ID:{1}) as done.",h.getName(), habitId));
 			habitDoneRepository.save(new HabitDone(h));});
-		habit.orElseThrow(() -> habitNotFound(habitId));
+		habit.orElseThrow(() -> habitNotFound(logger, habitId));
 		logger.info("The habit was marked as done.");
 	}
 	
@@ -54,9 +54,9 @@ public class HabitDoneService {
 						localDate));
 				habitDoneRepository.save(new HabitDone(h, doneDate.get()));
 				});
-			habit.orElseThrow(() -> habitNotFound(habitId));
+			habit.orElseThrow(() -> habitNotFound(logger, habitId));
 		});
-		doneDate.orElseThrow(()-> parseNotAllowed(date));
+		doneDate.orElseThrow(()-> parseNotAllowed(logger, date));
 		logger.info("The habit was marked as done.");
 	}
 	
@@ -66,7 +66,7 @@ public class HabitDoneService {
 	
 	public ResponseVO findByHabitOnDate(Long habitId, String doneDate) {
 		Optional<LocalDate> parsedDate = parseToLocalDate(doneDate);
-		parsedDate.orElseThrow(()-> parseNotAllowed(doneDate));
+		parsedDate.orElseThrow(()-> parseNotAllowed(logger, doneDate));
 		return findByHabitOnDate(habitId, parsedDate.get());	
 	}
 	
@@ -87,9 +87,9 @@ public class HabitDoneService {
 				response.setValueObject(habitVO);
 				logger.info(MessageFormat.format("Successfully found the habit ({0}, ID:{1}) on date: {2}.",h.getName() ,habitId, doneDate));
 			});
-			habitDone.orElseThrow(()-> doneHabitNotFound(h.getName(), habitId, doneDate));
+			habitDone.orElseThrow(()-> doneHabitNotFound(logger, h.getName(), habitId, doneDate));
 		});
-		habit.orElseThrow(() -> habitNotFound(habitId));
+		habit.orElseThrow(() -> habitNotFound(logger, habitId));
 		return response;
 	}
 	
@@ -101,23 +101,4 @@ public class HabitDoneService {
 			return Optional.empty();
 		}
 	}
-	
-	private ResourceNotFoundException doneHabitNotFound(String habitName, Long habitId, LocalDate date) {
-		String message = MessageFormat.format("The habit ({0}, ID:{1}) was not done on date {2}",habitName, habitId, date);
-		logger.info(message);
-		return new ResourceNotFoundException(message);
-	}
-	
-	private ResourceNotFoundException habitNotFound(long id) {
-		String message = MessageFormat.format("No habit found with ID: {0}.",id);
-		logger.info(message);
-		return new ResourceNotFoundException(message);
-	}
-	
-	private DateParserException parseNotAllowed(String date) {
-		String message = MessageFormat.format("Date {0} should be a text such as 2000-12-31", date);
-		logger.info(message);
-		return new DateParserException(message);
-	}
-	
 }
