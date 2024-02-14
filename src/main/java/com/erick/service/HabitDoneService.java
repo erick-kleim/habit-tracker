@@ -60,8 +60,8 @@ public class HabitDoneService {
 		logger.info("The habit was marked as done.");
 	}
 	
-	public void findByHabitToday(Long habitId) {
-		findByHabitOnDate(habitId, LocalDate.now());
+	public ResponseVO findByHabitToday(Long habitId) {
+		return findByHabitOnDate(habitId, LocalDate.now());
 	}
 	
 	public ResponseVO findByHabitOnDate(Long habitId, String doneDate) {

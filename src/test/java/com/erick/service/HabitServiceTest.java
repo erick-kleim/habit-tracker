@@ -85,7 +85,7 @@ class HabitServiceTest {
 		});
 		
 		assertNotNull(exception);
-		assertEquals("No habit found with ID: 4.", exception.getMessage());
+		assertEquals("Habit not found with ID: 4.", exception.getMessage());
 	}
 
 	@Test
@@ -119,7 +119,7 @@ class HabitServiceTest {
 	void testFindAll() {
 		when(repository.findAll()).thenReturn(mockHabit.list());
 		
-		ResponseListVO<HabitVO> responseListVO = service.findAll();
+		ResponseListVO responseListVO = service.findAll();
 		assertNotNull(responseListVO);
 		assertNull(responseListVO.getMessage());
 		assertNotNull(responseListVO.getValueObject());

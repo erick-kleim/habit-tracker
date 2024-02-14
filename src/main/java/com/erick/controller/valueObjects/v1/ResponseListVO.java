@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"valueObject", "message", "_links"})
-public class ResponseListVO<T> extends RepresentationModel<ResponseListVO<T>> implements Serializable {
+public class ResponseListVO extends RepresentationModel<ResponseListVO> implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private String message;
 		private List<HabitVO> valueObject;

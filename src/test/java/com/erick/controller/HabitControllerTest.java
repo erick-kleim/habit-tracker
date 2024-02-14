@@ -1,74 +1,109 @@
 package com.erick.controller;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.erick.mock.MockHabit;
-import com.erick.model.Habit;
+import com.erick.controller.valueObjects.v1.HabitVO;
+import com.erick.controller.valueObjects.v1.ResponseListVO;
+import com.erick.controller.valueObjects.v1.ResponseVO;
 import com.erick.service.HabitService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-@TestInstance(Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension.class)
-class HabitControllerTest {
+import java.util.Arrays;
 
-	MockHabit mockHabit;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-	@InjectMocks
-	HabitController controller;
+@WebMvcTest(HabitController.class)
+public class HabitControllerTest {
 
-	@Mock
-	private HabitService service;
+    @Autowired
+    private MockMvc mockMvc;
 
-	Habit habit;
-	Habit persisted;
-	Habit updated;
+    @MockBean
+    private HabitService habitService;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		mockHabit = new MockHabit();
-		habit = mockHabit.notPersisted();
-		persisted = mockHabit.persisted();
-		updated = mockHabit.updated();
-		MockitoAnnotations.openMocks(this);
-	}
+    @Test
+    void newHabit() throws Exception {
+        HabitVO habitVO = new HabitVO();
+        habitVO.setName("Exercise");
+        habitVO.setEnabled(true);
 
-	@Test
-	void testNewHabit() {
-		fail("Not yet implemented");
-	}
+        when(habitService.createHabit(habitVO)).thenReturn(1L);
 
-	@Test
-	void testGetById() {
-		fail("Not yet implemented");
-	}
+        mockMvc.perform(post("/habit/v1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Exercise\",\"enabled\":true}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/habit/v1/1"));
 
-	@Test
-	void testUpdate() {
-		fail("Not yet implemented");
-	}
+        verify(habitService, times(1)).createHabit(habitVO);
+    }
 
-	@Test
-	void testDisableById() {
-		fail("Not yet implemented");
-	}
+    @Test
+    void getById() throws Exception {
+        long habitId = 1L;
+        ResponseVO responseVO = new ResponseVO();
+        when(habitService.findById(habitId)).thenReturn(responseVO);
 
-	@Test
-	void testDeleteById() {
-		fail("Not yet implemented");
-	}
+        mockMvc.perform(get("/habit/v1/{id}", habitId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-	@Test
-	void testGetAll() {
-		fail("Not yet implemented");
-	}
+        verify(habitService, times(1)).findById(habitId);
+    }
 
+    @Test
+    void update() throws Exception {
+        HabitVO habitVO = new HabitVO();
+        habitVO.setId(1L);
+        habitVO.setName("Running");
+        habitVO.setEnabled(true);
+
+        mockMvc.perform(put("/habit/v1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id\":1,\"name\":\"Running\",\"enabled\":true}"))
+                .andExpect(status().isNoContent());
+
+        verify(habitService, times(1)).updateById(habitVO);
+    }
+
+    @Test
+    void disableById() throws Exception {
+        long habitId = 1L;
+        mockMvc.perform(patch("/habit/v1/{id}/disable", habitId))
+                .andExpect(status().isNoContent());
+
+        verify(habitService, times(1)).disableById(habitId);
+    }
+
+    @Test
+    void deleteById() throws Exception {
+        long habitId = 1L;
+        mockMvc.perform(delete("/habit/v1/{id}", habitId))
+                .andExpect(status().isNoContent());
+
+        verify(habitService, times(1)).deleteById(habitId);
+    }
+
+    @Test
+    void getAll() throws Exception {
+        ResponseListVO responseListVO = new ResponseListVO();
+        HabitVO habitVO = new HabitVO();
+        habitVO.setId(1L);
+        habitVO.setName("Running");
+        habitVO.setEnabled(true);
+        responseListVO.setValueObject(Arrays.asList(habitVO));
+
+        when(habitService.findAll()).thenReturn(responseListVO);
+
+        mockMvc.perform(get("/habit/v1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(habitService, times(1)).findAll();
+    }
 }

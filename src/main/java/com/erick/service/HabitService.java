@@ -103,7 +103,7 @@ public class HabitService{
 		habit.orElseThrow(() -> habitNotFound(logger, id));
 	}
 	
-	public ResponseListVO<HabitVO> findAll() {
+	public ResponseListVO findAll() {
 		logger.info("Initiating the retrieval of all habits.");
 		
 		List<Habit> habits = habitRepository.findAll();
@@ -116,7 +116,7 @@ public class HabitService{
 			return hvo;
 		}).collect(Collectors.toList());		
 
-		ResponseListVO<HabitVO> responseListVO = new ResponseListVO<HabitVO>();
+		ResponseListVO responseListVO = new ResponseListVO();
 		responseListVO.setValueObject(listVO);
 		
 		logger.info("Successfully retrieved all habits.");

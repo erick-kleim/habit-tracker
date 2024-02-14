@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +59,7 @@ public class HabitController {
 	@Operation(summary = "Find a habit by ID", description = "Find a habit by ID.",
 	tags = {"Habits"},
 	responses = {
-			@ApiResponse(description="Sucess", responseCode = "200",
+			@ApiResponse(description="Ok", responseCode = "200",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseVO.class))),
 			@ApiResponse(description="Bad Request", responseCode = "400", content = @Content),
 			@ApiResponse(description="Unauthorized", responseCode = "401", content = @Content),
@@ -66,8 +67,8 @@ public class HabitController {
 			@ApiResponse(description="Internal Error", responseCode = "500", content = @Content)
 			}
 	)
-	public ResponseVO getById( @PathVariable(value="id") long id ) {
-		return habitService.findById(id);
+	public ResponseEntity<ResponseVO> getById( @PathVariable(value="id") long id ) {
+		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(habitService.findById(id));
 	}
 	
 	@PutMapping
@@ -76,7 +77,7 @@ public class HabitController {
 		description = "This EP finds a habit by ID and updates the object with the body information.",
 		tags = {"Habits"},
 		responses = {
-			@ApiResponse(description="Sucess", responseCode = "200", content = @Content),
+			@ApiResponse(description="Ok", responseCode = "200", content = @Content),
 			@ApiResponse(description="Bad Request", responseCode = "400", content = @Content),
 			@ApiResponse(description="Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description="Not Found", responseCode = "404", content = @Content),
@@ -99,7 +100,7 @@ public class HabitController {
 				""",
 		tags = {"Habits"},
 		responses = {
-			@ApiResponse(description="Sucess", responseCode = "200", content = @Content),
+			@ApiResponse(description="Ok", responseCode = "200", content = @Content),
 			@ApiResponse(description="Bad Request", responseCode = "400", content = @Content),
 			@ApiResponse(description="Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description="Not Found", responseCode = "404", content = @Content),
@@ -121,7 +122,7 @@ public class HabitController {
 				""",
 		tags = {"Habits"},
 		responses = {
-			@ApiResponse(description="Sucess", responseCode = "200", content = @Content),
+			@ApiResponse(description="Ok", responseCode = "200", content = @Content),
 			@ApiResponse(description="Bad Request", responseCode = "400", content = @Content),
 			@ApiResponse(description="Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description="Not Found", responseCode = "404", content = @Content),
@@ -136,14 +137,14 @@ public class HabitController {
 	
 	@GetMapping
 	@Operation(summary = "Finds all habits", description = "Finds all habits, either disabled or enabled.", tags = {
-			"Habits" }, responses = { @ApiResponse(description = "Sucess", responseCode = "200", content = {
+			"Habits" }, responses = { @ApiResponse(description = "Ok", responseCode = "200", content = {
 					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ResponseListVO.class))) }),
 					@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
 					@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
 					@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
 					@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content) })
-	public ResponseListVO<HabitVO> getAll() {
-		return habitService.findAll();
+	public ResponseEntity<ResponseListVO> getAll() {
+		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(habitService.findAll());
 	}
 
 }

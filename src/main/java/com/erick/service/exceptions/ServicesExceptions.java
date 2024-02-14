@@ -9,7 +9,7 @@ import com.erick.exceptions.ResourceNotFoundException;
 
 public class ServicesExceptions {
 	public static ResourceNotFoundException habitNotFound(Logger logger, long id) {
-		String message = MessageFormat.format("No habit found with ID: {0}.",id);
+		String message = MessageFormat.format("Habit not found with ID: {0}.",id);
 		logger.info(message);
 		return new ResourceNotFoundException(message);
 	}
