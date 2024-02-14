@@ -42,8 +42,6 @@ public class HabitDoneController {
 	)
 	public ResponseEntity<Void> markAsDoneNow(@PathVariable(value="id") long id) {
 		service.createHabitDoneNow(id);
-//		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(habitVO.getId()).toUri();
-//		return ResponseEntity.noContent().location(uri).build();
 		return ResponseEntity.noContent().build();
 		
 	}
@@ -63,8 +61,6 @@ public class HabitDoneController {
 		)
 		public ResponseEntity<Void> markAsDone(@PathVariable(value="id") long id, @PathVariable(value="date") String date) {
 			service.createHabitDoneOnDate(id, date);
-//			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(habitVO.getId()).toUri();
-//			return ResponseEntity.noContent().location(uri).build();
 			return ResponseEntity.noContent().build();
 			
 		}
